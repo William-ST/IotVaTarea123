@@ -2,4 +2,4 @@ def opencvsdk = '../'
 include ':opencv'
 project(':opencv').projectDir = new File(opencvsdk+'/sdk')
 
-include ':base0', ':base2', ':base3', ':base4', ':base5', ':base5mono', 'orientacion', 'basefases', ':app'
+include ':base0', ':base2', ':base3', ':base4', ':base5', ':base5mono', ':orientacion', ':basefases', ':aumentolinealcontraste', ':ecualizacionhistograma', ':deteccionzonasrojas', ':deteccionzonasverdes', ':resaltenumerosenal', ':pfiltroslineales', ':contornogradiente', ':app'

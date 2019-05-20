@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/aumentolinealcontraste" />
             <option value="$PROJECT_DIR$/base0" />
             <option value="$PROJECT_DIR$/base2" />
             <option value="$PROJECT_DIR$/base3" />
@@ -16,7 +17,13 @@
             <option value="$PROJECT_DIR$/base5" />
             <option value="$PROJECT_DIR$/base5mono" />
             <option value="$PROJECT_DIR$/basefases" />
+            <option value="$PROJECT_DIR$/contornogradiente" />
+            <option value="$PROJECT_DIR$/deteccionzonasrojas" />
+            <option value="$PROJECT_DIR$/deteccionzonasverdes" />
+            <option value="$PROJECT_DIR$/ecualizacionhistograma" />
             <option value="$PROJECT_DIR$/orientacion" />
+            <option value="$PROJECT_DIR$/pfiltroslineales" />
+            <option value="$PROJECT_DIR$/resaltenumerosenal" />
             <option value="$PROJECT_DIR$/../sdk" />
           </set>
         </option>
