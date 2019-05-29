@@ -6,7 +6,7 @@
             android:summary="Muestra a la izquierda la entrada y a la derecha la salida"
             android:title="Pantalla partida" />
         <ListPreference
-            android:defaultValue="RECONOCIMIENTO"
+            android:defaultValue="ENTRADA"
             android:entries="@array/tipoSalida"
             android:entryValues="@array/valorSalida"
             android:key="salida"

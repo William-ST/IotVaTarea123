@@ -30,6 +30,7 @@ public class Procesador {
     private TipoBinarizacion tipoBinarizacion;
     private TipoSegmentacion tipoSegmentacion;
     private TipoReconocimiento tipoReconocimiento;
+    private ProcessInterface processInterface;
 
     public Procesador() {
         mostrarSalida = Salida.INTENSIDAD;
@@ -59,18 +60,22 @@ public class Procesador {
                 Imgproc.cvtColor(entrada, salidaintensidad, Imgproc.COLOR_RGBA2GRAY);
                 break;
             case AUMENTO_LINEAL_CONSTRASTE:
-                Imgproc.cvtColor(entrada, gris, Imgproc.COLOR_RGBA2GRAY);
-                aumentoLinealConstraste(gris);
-                //resultado en salidainte-nsidad
+                processInterface = new AumentoLinealContraste();
+                processInterface.init();
+                salidaintensidad = processInterface.process(entrada);
                 break;
             case EQUALIZ_HISTOGRAMA:
-                Imgproc.cvtColor(entrada, gris, Imgproc.COLOR_RGBA2GRAY);
-                //Eq. Hist necesita gris
-                Imgproc.equalizeHist(gris, salidaintensidad);
+                processInterface = new EcualizacionDeHistograma();
+                processInterface.init();
+                salidaintensidad = processInterface.process(entrada);
                 break;
             case ZONAS_ROJAS:
-                zonaRoja(entrada);
-                //resultado en salidaintensidad
+                processInterface = new DeteccionZonasRojas();
+                processInterface.init();
+                salidaintensidad = processInterface.process(entrada);
+                // TODO : (HERE)
+                if(salidaintensidad.channels() == 1)
+                    Imgproc.cvtColor(salidaintensidad, salidaintensidad, Imgproc.COLOR_GRAY2RGBA);
                 break;
             default:
                 salidaintensidad = entrada;
@@ -119,14 +124,6 @@ public class Procesador {
                 break;
         }
         return salidaocr;
-    }
-
-    void zonaRoja(Mat entrada) {//Ejemplo para ser rellenado en curso
-        salidaintensidad = entrada;
-    }
-
-    void aumentoLinealConstraste(Mat entrada) { //Ejemplo para ser rellenado
-        salidaintensidad = entrada;
     }
 
     void pasoBajo(Mat entrada) { //Ejemplo para ser rellenado
