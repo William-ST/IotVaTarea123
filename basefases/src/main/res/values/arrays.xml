@@ -62,14 +62,24 @@
     </string-array>
     <string-array name="tipoSegmentacion">
         <item>Sin proceso</item>
+        <item>Candidato círculos</item>
+        <item>Candidato círculos eliminar anidadas</item>
+        <item>Candidato zonas rojas</item>
+        <item>Candidato números</item>
     </string-array>
     <string-array name="valorSegmentacion">
         <item>SIN_PROCESO</item>
+        <item>CANDIDATOS_CIRCULOS</item>
+        <item>CANDIDATOS_CIRCULOS_ELIMINAR_ANIDADAS</item>
+        <item>CANDIDATOS_ZONAS_ROJAS</item>
+        <item>CANDIDATOS_NUMEROS</item>
     </string-array>
     <string-array name="tipoReconocimiento">
         <item>Sin proceso</item>
+        <item>Reconocimiento de dígito</item>
     </string-array>
     <string-array name="valorReconocimiento">
         <item>SIN_PROCESO</item>
+        <item>RECONOCIMIENTO_DIGITO</item>
     </string-array>
 </resources>

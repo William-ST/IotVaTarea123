@@ -19,9 +19,9 @@ public class Procesador {
 
     public enum TipoBinarizacion {SIN_PROCESO, ZONAS_ROJAS, ADAPTATIVA, OUTSU}
 
-    public enum TipoSegmentacion {SIN_PROCESO}
+    public enum TipoSegmentacion {SIN_PROCESO, CANDIDATOS_CIRCULOS, CANDIDATOS_CIRCULOS_ELIMINAR_ANIDADAS, CANDIDATOS_ZONAS_ROJAS, CANDIDATOS_NUMEROS}
 
-    public enum TipoReconocimiento {SIN_PROCESO}
+    public enum TipoReconocimiento {SIN_PROCESO, RECONOCIMIENTO_DIGITO}
 
     private Salida mostrarSalida;
     private TipoIntensidad tipoIntensidad;
@@ -112,7 +112,7 @@ public class Procesador {
                 salidatrlocal = processInterface.process(entrada);
                 break;
             case RESIDUO_DILATACION_11_11:
-                processInterface = new GradienteMorfológicoResiduoDilatacion_11_11();
+                processInterface = new GradienteMorfologicoResiduoDilatacion_11_11();
                 processInterface.init();
                 salidatrlocal = processInterface.process(entrada);
                 break;
@@ -152,6 +152,26 @@ public class Procesador {
             case SIN_PROCESO:
                 salidasegmentacion = salidabinarizacion;
                 break;
+            case CANDIDATOS_CIRCULOS:
+                processInterface = new SeleccionCandidatosCirculos();
+                processInterface.init();
+                salidasegmentacion = processInterface.process(entrada);
+                break;
+            case CANDIDATOS_CIRCULOS_ELIMINAR_ANIDADAS:
+                processInterface = new SeleccionCandidatosCirculosEliminarDeteccionesAnidadas();
+                processInterface.init();
+                salidasegmentacion = processInterface.process(entrada);
+                break;
+            case CANDIDATOS_ZONAS_ROJAS:
+                processInterface = new SeleccionCandidatosZonasRojas();
+                processInterface.init();
+                salidasegmentacion = processInterface.process(entrada);
+                break;
+            case CANDIDATOS_NUMEROS:
+                processInterface = new SegmentacionDigitosDentroSenal();
+                processInterface.init();
+                salidasegmentacion = processInterface.process(entrada);
+                break;
         }
         if (mostrarSalida == Salida.SEGMENTACION) {
             return salidasegmentacion;
@@ -160,6 +180,11 @@ public class Procesador {
         switch (tipoReconocimiento) {
             case SIN_PROCESO:
                 salidaocr = salidasegmentacion;
+                break;
+            case RECONOCIMIENTO_DIGITO:
+                processInterface = new LecturasCaracteresIndividuales();
+                processInterface.init();
+                processInterface.process(entrada);
                 break;
         }
         return salidaocr;

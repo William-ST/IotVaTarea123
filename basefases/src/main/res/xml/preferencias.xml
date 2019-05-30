@@ -5,6 +5,11 @@
             android:key="pantalla_partida"
             android:summary="Muestra a la izquierda la entrada y a la derecha la salida"
             android:title="Pantalla partida" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="get_image_color"
+            android:summary="Obtener imagen a color o gris"
+            android:title="Get Color image" />
         <ListPreference
             android:defaultValue="ENTRADA"
             android:entries="@array/tipoSalida"

@@ -33,6 +33,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.LineNumberReader;
 
 public class MainActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -49,6 +50,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private boolean guardarSiguienteImagen = false;
     Procesador procesador;
     private boolean pantallaPartida = false;
+    private boolean getColorImage = false;
     private Handler handler;
 
     @Override
@@ -159,6 +161,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         PreferenceManager.setDefaultValues(this, R.xml.preferencias, false);
         SharedPreferences preferencias = PreferenceManager.getDefaultSharedPreferences(this);
         pantallaPartida = (preferencias.getBoolean("pantalla_partida", true));
+        getColorImage = (preferencias.getBoolean("get_image_color", false));
         String valor = preferencias.getString("salida", "ENTRADA");
         procesador.setMostrarSalida(Procesador.Salida.valueOf(valor));
         valor = preferencias.getString("intensidad", "SIN_PROCESO");
@@ -226,7 +229,12 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         Mat entrada = null;
         try {
             if (tipoEntrada == 0) {
-                entrada = inputFrame.gray();
+                Log.i(TAG, "getColorImage preference: "+getColorImage);
+                if (getColorImage) {
+                    entrada = inputFrame.rgba();
+                } else {
+                    entrada = inputFrame.gray();
+                }
             } else {
                 if (recargarRecurso) {
                     imagenRecurso_ = new Mat();
@@ -241,9 +249,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 }
                 entrada = imagenRecurso_;
             }
+            Mat temp = entrada.clone();
             Mat salida = procesador.procesa(entrada);
             if (guardarSiguienteImagen) {//Para foto salida debe ser rgba
-                takePhoto(entrada, salida);
+                takePhoto(temp, salida);
                 guardarSiguienteImagen = false;
             }
             if (tipoEntrada > 0) {
@@ -263,10 +272,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         }
     }
 
-    private void takePhoto(final Mat input, final Mat output) {
+    public static void takePhoto(final Mat input, final Mat output) {
         // Determina la ruta para crear los archivos
         final long currentTimeMillis = System.currentTimeMillis();
-        final String appName = getString(R.string.app_name);
+        final String appName = "Basefases";//getString(R.string.app_name);
         final String galleryPath = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES).toString();
         final String albumPath = galleryPath + "/" + appName;
