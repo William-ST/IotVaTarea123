@@ -131,10 +131,14 @@ public class Procesador {
                 salidabinarizacion = processInterface.process(entrada);
                 break;
             case ADAPTATIVA:
-
+                processInterface = new BinarizacionAdaptativa();
+                processInterface.init();
+                salidabinarizacion = processInterface.process(entrada);
                 break;
             case OUTSU:
-
+                processInterface = new BinarizacionOtsu();
+                processInterface.init();
+                salidabinarizacion = processInterface.process(entrada);
                 break;
             default:
                 salidabinarizacion = salidatrlocal;
