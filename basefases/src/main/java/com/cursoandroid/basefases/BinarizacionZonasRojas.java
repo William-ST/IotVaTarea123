@@ -1,10 +1,12 @@
 package com.cursoandroid.basefases;
 
+import android.util.Log;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
-public class DeteccionZonasRojas implements ProcessInterface {
+public class BinarizacionZonasRojas implements ProcessInterface {
 
     Mat red;
     Mat green;
@@ -13,6 +15,7 @@ public class DeteccionZonasRojas implements ProcessInterface {
 
     @Override
     public void init() {
+        Log.d(BinarizacionZonasRojas.class.getCanonicalName(), "init()");
         red = new Mat();
         green = new Mat();
         blue = new Mat();
@@ -28,8 +31,10 @@ public class DeteccionZonasRojas implements ProcessInterface {
         Core.max(green, blue, maxGB);
         Core.subtract( red , maxGB , output);
 
-        if(output.channels() == 1)
-            Imgproc.cvtColor(output, output, Imgproc.COLOR_GRAY2RGBA);
+        Core.MinMaxLocResult minMax = Core.minMaxLoc(output);
+        int maximum = (int) minMax.maxVal;
+        int thresh = maximum / 4;
+        Imgproc.threshold(output, output, thresh, 255, Imgproc.THRESH_BINARY);
 
         return output;
     }

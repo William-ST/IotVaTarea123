@@ -13,11 +13,11 @@ public class Procesador {
 
     public enum Salida {ENTRADA, INTENSIDAD, OPERADOR_LOCAL, BINARIZACION, SEGMENTACION, RECONOCIMIENTO}
 
-    public enum TipoIntensidad {SIN_PROCESO, LUMINANCIA, AUMENTO_LINEAL_CONSTRASTE, EQUALIZ_HISTOGRAMA, ZONAS_ROJAS}
+    public enum TipoIntensidad {SIN_PROCESO, LUMINANCIA, AUMENTO_LINEAL_CONSTRASTE, EQUALIZ_HISTOGRAMA, ZONAS_ROJAS, ZONAS_VERDES}
 
-    public enum TipoOperadorLocal {SIN_PROCESO, PASO_BAJO, PASO_ALTO, GRADIENTES}
+    public enum TipoOperadorLocal {SIN_PROCESO, PASO_BAJO, PASO_ALTO, GRADIENTES, GRADIENTE_COMPONENTE_ROJO, RESIDUO_DILATACION_3_3, RESIDUO_DILATACION_11_11}
 
-    public enum TipoBinarizacion {SIN_PROCESO, ADAPTATIVA, MAXIMO}
+    public enum TipoBinarizacion {SIN_PROCESO, ZONAS_ROJAS, ADAPTATIVA, OUTSU}
 
     public enum TipoSegmentacion {SIN_PROCESO}
 
@@ -47,7 +47,7 @@ public class Procesador {
         gris = new Mat();
     }
 
-    public Mat procesa(Mat entrada) {
+    public Mat procesa(Mat entrada) throws RuntimeException {
         if (mostrarSalida == Salida.ENTRADA) {
             return entrada;
         }
@@ -73,9 +73,11 @@ public class Procesador {
                 processInterface = new DeteccionZonasRojas();
                 processInterface.init();
                 salidaintensidad = processInterface.process(entrada);
-                // TODO : (HERE)
-                if(salidaintensidad.channels() == 1)
-                    Imgproc.cvtColor(salidaintensidad, salidaintensidad, Imgproc.COLOR_GRAY2RGBA);
+                break;
+            case ZONAS_VERDES:
+                processInterface = new DeteccionZonasVerdes();
+                processInterface.init();
+                salidaintensidad = processInterface.process(entrada);
                 break;
             default:
                 salidaintensidad = entrada;
@@ -89,8 +91,30 @@ public class Procesador {
                 salidatrlocal = salidaintensidad;
                 break;
             case PASO_BAJO:
-                pasoBajo(salidaintensidad);
+                processInterface = new FiltradoPasoAlto();
+                processInterface.init();
+                salidatrlocal = processInterface.process(entrada);
                 //resultado en salidatrlocal
+                break;
+            case GRADIENTES:
+                processInterface = new DeteccionContornosGradientesSobel();
+                processInterface.init();
+                salidatrlocal = processInterface.process(entrada);
+                break;
+            case GRADIENTE_COMPONENTE_ROJO:
+                processInterface = new GradientesSobelComponenteRojo();
+                processInterface.init();
+                salidatrlocal = processInterface.process(entrada);
+                break;
+            case RESIDUO_DILATACION_3_3:
+                processInterface = new GradienteMorfológicoResiduoDilatacion_3_3();
+                processInterface.init();
+                salidatrlocal = processInterface.process(entrada);
+                break;
+            case RESIDUO_DILATACION_11_11:
+                processInterface = new GradienteMorfológicoResiduoDilatacion_11_11();
+                processInterface.init();
+                salidatrlocal = processInterface.process(entrada);
                 break;
         }
         if (mostrarSalida == Salida.OPERADOR_LOCAL) {
@@ -100,6 +124,17 @@ public class Procesador {
         switch (tipoBinarizacion) {
             case SIN_PROCESO:
                 salidabinarizacion = salidatrlocal;
+                break;
+            case ZONAS_ROJAS:
+                processInterface = new BinarizacionZonasRojas();
+                processInterface.init();
+                salidabinarizacion = processInterface.process(entrada);
+                break;
+            case ADAPTATIVA:
+
+                break;
+            case OUTSU:
+
                 break;
             default:
                 salidabinarizacion = salidatrlocal;
@@ -125,11 +160,6 @@ public class Procesador {
         }
         return salidaocr;
     }
-
-    void pasoBajo(Mat entrada) { //Ejemplo para ser rellenado
-        salidatrlocal = entrada;
-    }
-
 
     public Mat getGris() {
         return gris;

@@ -22,6 +22,7 @@
         <item>Ecualización de histograma</item>
         <item>Luminancia</item>
         <item>Zonas Rojas</item>
+        <item>Zonas Verdes</item>
     </string-array>
     <string-array name="valorIntensidad">
         <item>SIN_PROCESO</item>
@@ -29,20 +30,35 @@
         <item>EQUALIZ_HISTOGRAMA</item>
         <item>LUMINANCIA</item>
         <item>ZONAS_ROJAS</item>
+        <item>ZONAS_VERDES</item>
     </string-array>
     <string-array name="tipoOperadorLocal">
         <item>Sin proceso</item>
         <item>Filtro Paso Bajo</item>
+        <item>Gradientes</item>
+        <item>Gradiente rojo</item>
+        <item>Residuo dilatación 3x3</item>
+        <item>Residuo dilatación 11x11</item>
     </string-array>
     <string-array name="valorOperadorLocal">
         <item>SIN_PROCESO</item>
         <item>PASO_BAJO</item>
+        <item>GRADIENTES</item>
+        <item>GRADIENTE_COMPONENTE_ROJO</item>
+        <item>RESIDUO_DILATACION_3_3</item>
+        <item>RESIDUO_DILATACION_11_11</item>
     </string-array>
     <string-array name="tipoBinarizacion">
         <item>Sin proceso</item>
+        <item>Zonas Rojas M/4</item>
+        <item>Adaptativa</item>
+        <item>Outsu</item>
     </string-array>
     <string-array name="valorBinarizacion">
         <item>SIN_PROCESO</item>
+        <item>ZONAS_ROJAS</item>
+        <item>ADAPTATIVA</item>
+        <item>OUTSU</item>
     </string-array>
     <string-array name="tipoSegmentacion">
         <item>Sin proceso</item>

@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -48,13 +49,14 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private boolean guardarSiguienteImagen = false;
     Procesador procesador;
     private boolean pantallaPartida = false;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
-
+        handler = new Handler();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
@@ -221,33 +223,44 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        Mat entrada;
-        if (tipoEntrada == 0) {
-            entrada = inputFrame.rgba();
-        } else {
-            if (recargarRecurso) {
-                imagenRecurso_ = new Mat();
-                //Poner aqui el nombre de los archivos copiados
-                int RECURSOS_FICHEROS[] = {0, R.raw.img1, R.raw.img2};
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-                        RECURSOS_FICHEROS[tipoEntrada]);
-                //Convierte el recurso a una Mat de OpenCV
-                Utils.bitmapToMat(bitmap, imagenRecurso_);
-                Imgproc.resize(imagenRecurso_, imagenRecurso_, new Size(cam_anchura, cam_altura));
-                recargarRecurso = false;
+        Mat entrada = null;
+        try {
+            if (tipoEntrada == 0) {
+                entrada = inputFrame.rgba();
+            } else {
+                if (recargarRecurso) {
+                    imagenRecurso_ = new Mat();
+                    //Poner aqui el nombre de los archivos copiados
+                    int RECURSOS_FICHEROS[] = {0, R.raw.img1, R.raw.img2};
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+                            RECURSOS_FICHEROS[tipoEntrada]);
+                    //Convierte el recurso a una Mat de OpenCV
+                    Utils.bitmapToMat(bitmap, imagenRecurso_);
+                    Imgproc.resize(imagenRecurso_, imagenRecurso_, new Size(cam_anchura, cam_altura));
+                    recargarRecurso = false;
+                }
+                entrada = imagenRecurso_;
             }
-            entrada = imagenRecurso_;
-        }
-        Mat salida = procesador.procesa(entrada);
-        if (guardarSiguienteImagen) {//Para foto salida debe ser rgba
-            takePhoto(entrada, salida);
-            guardarSiguienteImagen = false;
-        }
-        if (tipoEntrada > 0) {
+            Mat salida = procesador.procesa(entrada);
+            if (guardarSiguienteImagen) {//Para foto salida debe ser rgba
+                takePhoto(entrada, salida);
+                guardarSiguienteImagen = false;
+            }
+            if (tipoEntrada > 0) {
 //Es necesario que el tamaño de la salida coincida con el real de captura
-            Imgproc.resize(salida, salida, new Size(cam_anchura, cam_altura));
+                Imgproc.resize(salida, salida, new Size(cam_anchura, cam_altura));
+            }
+            return salida;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, "Erro al procesar, modificar las preferencias!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return entrada;
         }
-        return salida;
     }
 
     private void takePhoto(final Mat input, final Mat output) {
